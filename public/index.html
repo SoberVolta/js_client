@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ΔΔ</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-red.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<div class="mdl-layout mdl-js-layout mdl-layout-drawer mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <span class="mdl-layout__title">ΔΔ - Dede Rides</span>
+            <div class="mdl-layout-spacer"></div>
+            <!-- Accent-colored raised button with ripple -->
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                    id="SignInButton">
+                <i class="sign-in-icon fa fa-facebook-square"></i>
+                <span id="SignInText" style="padding-left: 10px;"></span>
+            </button>
+        </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">ΔΔ</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/about">
+                <i class="drawer-icon-left material-icons" style="padding-right: 10px;">info</i>About
+            </a>
+            <a class="mdl-navigation__link" href="/contact">
+                <i class="drawer-icon-left material-icons" style="padding-right: 10px;">contact_mail</i>Contact Us
+            </a>
+        </nav>
+    </div>
+    <main class="mdl-layout__content">
+        <div class="page-content">
+
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp welcome-card">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Welcome</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    Enter the Event ID of the event you would like to go to.
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    <!-- Textfield with Floating Label -->
+
+                    <form action="#">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="EventID">
+                            <label class="mdl-textfield__label" for="EventID">Event ID...</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="mdl-card__menu">
+                    <!--<button class="mdl-button mdl-button&#45;&#45;icon mdl-js-button mdl-js-ripple-effect">-->
+                    <!--<i class="material-icons">share</i>-->
+                    <!--</button>-->
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+<script src="/js/main.js"></script>
+
+</body>
+</html>
