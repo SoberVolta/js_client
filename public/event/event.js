@@ -134,19 +134,29 @@ function executeRequestRide() {
 
     if ( userUID ) {
 
-        var rideKey = ref.child("rides").push().key;
+        navigator.geolocation.getCurrentPosition( function ( pos ) {
 
-        var rideData = {};
-        rideData[ 'status' ] = 0;
-        rideData[ 'rider' ] = userUID;
-        rideData[ 'event' ] = eventID;
+            var rideKey = ref.child("rides").push().key;
 
-        var updates = {};
-        updates[ '/rides/' + rideKey ] = rideData;
-        updates[ '/events/' + eventID + '/queue/' + rideKey ] = userUID;
-        updates[ '/users/' + userUID + '/rides/' + rideKey ] = eventName;
+            var rideData = {};
+            rideData[ 'status' ] = 0;
+            rideData[ 'rider' ] = userUID;
+            rideData[ 'event' ] = eventID;
+            rideData[ 'latitude' ] = pos.coords.latitude;
+            rideData[ 'longitude' ] = pos.coords.longitude;
 
-        ref.update(updates);
+            var updates = {};
+            updates[ '/rides/' + rideKey ] = rideData;
+            updates[ '/events/' + eventID + '/queue/' + rideKey ] = userUID;
+            updates[ '/users/' + userUID + '/rides/' + rideKey ] = eventName;
+
+            ref.update(updates);
+
+        }, function ( error ) {
+
+            alert( "Dede needs access to your location in order to request a ride." );
+
+        });
 
     } else {
 
