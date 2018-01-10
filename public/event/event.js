@@ -12,6 +12,7 @@ var rideStatus = undefined;
 var RideNotRequested = -1;
 var RideRequested = 0;
 var RideActive = 1;
+var userIsTryingToRequestRide = false;
 
 var userRideIDInEventQueue = undefined;
 
@@ -149,7 +150,8 @@ function executeRequestRide() {
 
     } else {
 
-        alert( "You must sign in before requesting a ride" );
+        userIsTryingToRequestRide = true;
+        firebase.auth().signInWithPopup(provider);
 
     }
 
@@ -179,6 +181,15 @@ createEventModel(eventID);
 
 $.Topic( UserDisplayNameDidChange ).subscribe( function ( value ) {
     $("#SignInText").html( userDisplayName ? "" + userDisplayName.split(" ")[0] : "Sign In");
+});
+
+$.Topic( UserUIDDidChange ).subscribe( function ( value ) {
+
+    if ( userUID && userIsTryingToRequestRide ) {
+        userIsTryingToRequestRide = false;
+        executeRequestRide();
+    }
+
 });
 
 $("#SignInButton").click( function () {
