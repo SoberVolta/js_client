@@ -14,6 +14,7 @@ var EventLocationDidChange = "EventLocationDidChange";
 var EventQueueDidChange = "EventQueueDidChange";
 var EventActiveRidesDidChange = "EventActiveRidesDidChange";
 var EventDisabledDidChange = "EventDisabledDidChange";
+var EventDisabledUsersDidChange = "EventDisabledUsersDidChange";
 
 // Variables
 var eventDoesExist = true;
@@ -22,6 +23,7 @@ var eventLocation = undefined;
 var eventQueue = undefined;
 var eventActiveRides = undefined;
 var eventDisabled = false;
+var eventDisabledUsers = undefined;
 
 // Create Model
 function createEventModel( eventID ) {
@@ -31,6 +33,7 @@ function createEventModel( eventID ) {
     eventsRef.child(eventID).child("disabled").on('value', eventDisabledValueListener);
     eventsRef.child(eventID).child("queue").on('value', eventQueueValueListener);
     eventsRef.child(eventID).child("activeRides").on('value', eventActiveRidesValueListener);
+    eventsRef.child(eventID).child("disabledUsers").on('value', eventDisabledUsersValueListenr);
 }
 
 
@@ -63,6 +66,11 @@ function eventActiveRidesValueListener( snap ) {
 function eventDisabledValueListener( snap ) {
     eventDisabled = !!snap.val();
     $.Topic( EventDisabledDidChange ).publish( true );
+}
+
+function eventDisabledUsersValueListenr( snap ) {
+    eventDisabledUsers = snap.val();
+    $.Topic( EventDisabledUsersDidChange ).publish( true );
 }
 
 // Notifications

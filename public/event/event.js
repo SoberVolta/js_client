@@ -44,6 +44,28 @@ $.Topic( EventDisabledDidChange ).subscribe( function ( val ) {
 
 });
 
+function checkIfUserIsDiabled( val ) {
+
+    if( eventDisabledUsers && userUID ) {
+        var i = 0;
+        var eventDisabledUserKeys = Object.keys( eventDisabledUsers );
+
+        while( i < eventDisabledUserKeys.length ) {
+
+            if( eventDisabledUserKeys[ i ] === userUID ) {
+
+                alert( "You are not allowed to view this event" );
+                window.location.href = "/";
+            }
+
+            i++;
+        }
+    }
+
+}
+$.Topic( EventDisabledUsersDidChange ).subscribe( checkIfUserIsDiabled );
+$.Topic( UserUIDDidChange ).subscribe( checkIfUserIsDiabled );
+
 function updateRideStatusValue() {
 
     if ( userRides ) {
@@ -115,7 +137,33 @@ $.Topic( UserUIDDidChange ).subscribe( updateRideStatus );
 $.Topic( EventActiveRidesDidChange ).subscribe( updateRideStatus );
 $.Topic( UserRidesDidChange ).subscribe( updateRideStatus );
 
+var requestRideBtnCounter = 0;
+
+function decrementRequestRideButtonCounter() {
+    requestRideBtnCounter--;
+}
+
 $("#requestRideBtn").click(function () {
+
+    if( !userUID || !eventID ) {
+        return;
+    } 
+
+    requestRideBtnCounter++;
+    window.setTimeout( decrementRequestRideButtonCounter, 60*1000 );
+
+    if( requestRideBtnCounter >= 10 ) {
+
+        setTimeout( executeCancelRideRequst, 1 );
+
+        var updates = {};
+
+        updates[ "/events/" + eventID + "/disabledUsers/" + userUID ] = userDisplayName;
+
+        ref.update( updates );
+
+        window.location.href = "/";
+    }
 
     if ( rideStatus === RideNotRequested ) {
 
@@ -204,6 +252,8 @@ function executeRequestRide() {
 
     if ( userUID ) {
 
+        $("#requestRideBtn").html( "Loading" );
+        $("#requestRideBtn").prop('disabled', true);
         navigator.geolocation.getCurrentPosition( function ( pos ) {
 
             var rideKey = ref.child("rides").push().key;
