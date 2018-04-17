@@ -65,7 +65,6 @@ function eventDisabledValueListener( snap ) {
     $.Topic( EventDisabledDidChange ).publish( true );
 }
 
-
 // Notifications
 var UserDoesExist = "UserDoesExist";
 var UserUIDDidChange = "UserUIDDidChange";
@@ -77,18 +76,33 @@ var UserSavedEventsDidChange = "userSavedEventsDidChange";
 var userDoesExist = true;
 var userUID = undefined;
 var userDisplayName = undefined;
+var userFacebookID = undefined;
 var userRides = undefined;
 var userSavedEvents = undefined;
 
 firebase.auth().onAuthStateChanged(function(user) {
 
     if( user ) {
+
         userDoesExist = true;
         $.Topic( UserDoesExist ).publish( true );
         userUID = user.uid;
         $.Topic( UserUIDDidChange ).publish( true );
         userDisplayName = user.displayName;
+
+        user.providerData.forEach( function(profile) {
+
+            console.log( "Provider: " + profile.providerId );
+            console.log( "\tUID: " + profile.uid );
+
+            if( profile.providerId.includes( "facebook.com" )) {
+                userFacebookID = profile.uid;
+            }
+
+        } );
+
         $.Topic( UserDisplayNameDidChange ).publish( true );
+        usersRef.child( user.uid ).on( "value", addUserIfTheyDoNotExist );
         usersRef.child( user.uid ).child( "rides" ).on("value", userRidesValueListener);
         usersRef.child( user.uid ).child( "savedEvents" ).on( "value", userSavedEventsValueListener );
 
@@ -104,6 +118,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         $.Topic( UserRidesDidChange ).publish( true );
         userSavedEvents = undefined;
         $.Topic( UserSavedEventsDidChange ).publish( true );
+        userFacebookID = undefined;
 
     }
 
@@ -117,4 +132,17 @@ function userRidesValueListener( snap ) {
 function userSavedEventsValueListener( snap ) {
     userSavedEvents = snap.val();
     $.Topic( UserSavedEventsDidChange ).publish( true );
+}
+
+function addUserIfTheyDoNotExist( snap ) {
+
+    var userDisplayName = snap.child( "displayName" ).val()
+
+    var updates = {};
+
+    updates[ "/users/" + userUID + "/displayName" ] = userDisplayName;
+    updates[ "/users/" + userUID + "/facebookUID" ] = userFacebookID;
+
+    ref.update( updates );
+
 }
