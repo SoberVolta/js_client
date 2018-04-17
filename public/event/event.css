@@ -1,4 +1,9 @@
-#requestRideBtn {
+.action_button {
     width: 100%;
     margin-top: 10px;
+}
+
+#saveEventBtn {
+    background-color: #FFEB3B;
+    color: black;
 }

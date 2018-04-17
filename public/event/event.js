@@ -129,6 +129,76 @@ $("#requestRideBtn").click(function () {
 
 });
 
+var userHasSavedEvent = false;
+
+function updateSavedEvents( val ) {
+
+    userHasSavedEvent = false;
+
+    if( userSavedEvents ) {
+
+        var userSavedEventKeys = Object.keys( userSavedEvents );
+
+        if( eventID ) {
+
+            var i = 0;
+            while( i < userSavedEventKeys.length ) {
+
+                if( userSavedEventKeys[ i ] === eventID ) {
+                    userHasSavedEvent = true;
+                    break;
+                }
+
+                i++;
+            }
+        }
+    }
+
+    if( userHasSavedEvent ) {
+        $("#saveEventBtn").html("Event Saved!");
+    } else {
+        $("#saveEventBtn").html("Save Event");
+    }
+}
+$.Topic( UserSavedEventsDidChange ).subscribe( updateSavedEvents );
+
+$("#saveEventBtn").click( function() {
+
+    if( userUID ) {
+
+        if( eventID ) {
+
+            if( userHasSavedEvent ) {
+
+                var updates = {};
+                updates[ '/users/' + userUID + "/savedEvents/" + eventID ] 
+                    = null;
+
+            } else {
+
+                var updates = {};
+                updates[ '/users/' + userUID + "/savedEvents/" + eventID ] 
+                    = eventName;
+
+
+            }
+
+            ref.update(updates);
+
+        } else {
+
+            alert( "Navigate to an event page to save an event." );
+
+        }
+
+    } else {
+        
+        alert( "You must first sign in to save an event." );
+
+    }
+
+} );
+
 function executeRequestRide() {
 
 
@@ -161,7 +231,7 @@ function executeRequestRide() {
     } else {
 
         userIsTryingToRequestRide = true;
-        firebase.auth().signInWithPopup(provider);
+        firebase.auth().signInWithRedirect(provider);
 
     }
 
@@ -207,7 +277,7 @@ $("#SignInButton").click( function () {
     if ( userDoesExist ) {
         firebase.auth().signOut();
     } else {
-        firebase.auth().signInWithPopup(provider);
+        firebase.auth().signInWithRedirect(provider);
     }
 
 

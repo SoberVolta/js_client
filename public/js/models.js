@@ -71,12 +71,14 @@ var UserDoesExist = "UserDoesExist";
 var UserUIDDidChange = "UserUIDDidChange";
 var UserDisplayNameDidChange = "userDisplayNameDidChange";
 var UserRidesDidChange = "userRidesDidChange";
+var UserSavedEventsDidChange = "userSavedEventsDidChange";
 
 // Variables
 var userDoesExist = true;
 var userUID = undefined;
 var userDisplayName = undefined;
 var userRides = undefined;
+var userSavedEvents = undefined;
 
 firebase.auth().onAuthStateChanged(function(user) {
 
@@ -87,8 +89,11 @@ firebase.auth().onAuthStateChanged(function(user) {
         $.Topic( UserUIDDidChange ).publish( true );
         userDisplayName = user.displayName;
         $.Topic( UserDisplayNameDidChange ).publish( true );
-        usersRef.child( user.uid ).child( "rides" ).on("value", userRidesValueListener)
+        usersRef.child( user.uid ).child( "rides" ).on("value", userRidesValueListener);
+        usersRef.child( user.uid ).child( "savedEvents" ).on( "value", userSavedEventsValueListener );
+
     } else {
+
         userDoesExist = false;
         $.Topic( UserDoesExist ).publish( true );
         userUID = undefined;
@@ -97,6 +102,9 @@ firebase.auth().onAuthStateChanged(function(user) {
         $.Topic( UserDisplayNameDidChange ).publish( true );
         userRides = undefined;
         $.Topic( UserRidesDidChange ).publish( true );
+        userSavedEvents = undefined;
+        $.Topic( UserSavedEventsDidChange ).publish( true );
+
     }
 
 });
@@ -104,4 +112,9 @@ firebase.auth().onAuthStateChanged(function(user) {
 function userRidesValueListener( snap ) {
     userRides = snap.val();
     $.Topic( UserRidesDidChange ).publish( true );
+}
+
+function userSavedEventsValueListener( snap ) {
+    userSavedEvents = snap.val();
+    $.Topic( UserSavedEventsDidChange ).publish( true );
 }
